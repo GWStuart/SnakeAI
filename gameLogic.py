@@ -1,14 +1,13 @@
 import random
 
 class Game:
-    SNAKE_SPAWN_POSITION = (20, 20)
+    SNAKE_SPAWN_POSITION = (2, 2)
 
-    def __init__(self, LENGTH: int, HEIGHT: int, CELL_SIZE: int = 10):
-        self.LENGTH = LENGTH
-        self.HEIGHT = HEIGHT
-        self.CELL_SIZE = 10
+    def __init__(self, XCELLS: int, YCELLS: int):
+        self.XCELLS = XCELLS
+        self.YCELLS = YCELLS
 
-        self.snake = Snake(LENGTH, HEIGHT, CELL_SIZE, *Game.SNAKE_SPAWN_POSITION)
+        self.snake = Snake(XCELLS, YCELLS, *Game.SNAKE_SPAWN_POSITION)
 
     """
     Updates the game and returns False if the game is over
@@ -36,7 +35,7 @@ class Game:
     This is good if you are sure that the provided key is valid
     @requires that the provided key is valid
     """
-    def sendKeyFase(self, key: str):
+    def sendKeyFast(self, key: str):
         self.snake.move(key)
 
     def getSnakeBody(self) -> list[tuple[int]]:
@@ -45,26 +44,33 @@ class Game:
     def getApplePosition(self) -> tuple[int, int]:
         return self.snake.apple
 
+    def isGameOver(self) -> bool:
+        return self.snake.isGameOver()
+
+    def getScore(self) -> int:
+        return self.snake.score
+
+    def getSnakeHead(self) -> tuple[int, int]:
+        return self.snake.body[-1]
+
 
 class Snake:
     """
     Constructor for the snake
     @param x, y are the x and y initial coordinates of the snake
     """
-    def __init__(self, LENGTH: int, HEIGHT: int, CELL_SIZE: int, x: int, y: int):
-        self.LENGTH = LENGTH
-        self.HEIGHT = HEIGHT
-        self.XCELLS = LENGTH // CELL_SIZE
-        self.YCELLS = HEIGHT // CELL_SIZE
-        self.CELL_SIZE = CELL_SIZE
+    def __init__(self, XCELLS: int, YCELLS: int, x: int, y: int):
+        self.XCELLS = XCELLS 
+        self.YCELLS = YCELLS
         self.x = x
         self.y = y
-        self.apple = self.getRandomCell()
 
+        self.apple = self.getRandomCell()
+        self.score = 0
         self.body = [(x, y)]
 
     def getRandomCell(self) -> tuple[int, int]:
-        return random.randint(0, self.XCELLS) * self.CELL_SIZE, random.randint(0, self.YCELLS) * self.CELL_SIZE
+        return random.randint(0, self.XCELLS), random.randint(0, self.YCELLS)
 
     """
     Moves the snake in its direction of motion
@@ -73,13 +79,13 @@ class Snake:
     def move(self, direction: str):
         match direction:
             case "l":
-                self.x -= self.CELL_SIZE
+                self.x -= 1
             case "r":
-                self.x += self.CELL_SIZE 
+                self.x += 1
             case "u":
-                self.y -= self.CELL_SIZE
+                self.y -= 1
             case _:
-                self.y += self.CELL_SIZE
+                self.y += 1
 
         self.body.append((self.x, self.y))
 
@@ -94,6 +100,7 @@ class Snake:
 
         if self.body[-1] == self.apple:  # check if the snake is on the apple
             self.apple = self.getRandomCell()
+            self.score += 1
         else:
             self.body.pop(0)
         return True
@@ -103,7 +110,7 @@ class Snake:
     @returns True if the game is over and False otherwise
     """
     def isGameOver(self) -> bool:
-        if self.x < 0 or self.x > self.LENGTH or self.y < 0 or self.y > self.HEIGHT:
+        if self.x < 0 or self.x > self.XCELLS or self.y < 0 or self.y > self.YCELLS:
             return True
         if self.body[-1] in self.body[:-1]:  # might be faster to compare body vs set() of body idk
             return True

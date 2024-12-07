@@ -3,24 +3,25 @@ import pygame
 pygame.init()
 
 LENGTH, HEIGHT = 800, 600
+CELL_SIZE = 10
+XCELLS, YCELLS = LENGTH / CELL_SIZE, HEIGHT / CELL_SIZE
 
 win = pygame.display.set_mode((LENGTH, HEIGHT))
 pygame.display.set_caption("Snake Game")
 
 snake_direction = "r"  # the starting snake direction
 
-CELL_SIZE = 10
-game = Game(LENGTH, HEIGHT, CELL_SIZE)
+game = Game(XCELLS, YCELLS)
 clock = pygame.time.Clock()
 
 def render(game: Game) -> None:
     win.fill((0, 0, 0))
 
     for part in game.getSnakeBody():
-        pygame.draw.rect(win, (0, 255, 0), (*part, CELL_SIZE, CELL_SIZE))
+        pygame.draw.rect(win, (0, 255, 0), (part[0] * CELL_SIZE, part[1] * CELL_SIZE, CELL_SIZE, CELL_SIZE))
 
     apple = game.getApplePosition()
-    pygame.draw.rect(win, (255, 0, 0), (*apple, CELL_SIZE, CELL_SIZE))
+    pygame.draw.rect(win, (255, 0, 0), (apple[0] * CELL_SIZE, apple[1] * CELL_SIZE, CELL_SIZE, CELL_SIZE))
 
 run = True
 while run:
