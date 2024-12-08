@@ -48,7 +48,7 @@ while run:
     else:
         game.sendKey(snake_direction)
 
-    if not game.update():
+    if game.isGameOver():
         print("GAME OVER")
         run = False
 

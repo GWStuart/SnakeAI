@@ -7,11 +7,13 @@ file = input("What file would you like to render: ")
 file = open(f"saves/{file}.snake")
 
 CELL_SIZE = 10
-XCELLS, YCELLS, seed = map(int, file.readline().split())
+XCELLS, YCELLS, seed, num_moves = map(int, file.readline().split())
 LENGTH, HEIGHT = XCELLS * CELL_SIZE, YCELLS * CELL_SIZE
 random.seed(seed)
 
 FPS = 10 
+PRINT_FREQUENCY = 10  # at which percent interval to print an update
+spacing = round(num_moves / PRINT_FREQUENCY)
 
 fourcc = cv2.VideoWriter_fourcc(*'MP42')
 video = cv2.VideoWriter('./output.avi', fourcc, float(FPS), (LENGTH, HEIGHT))
@@ -31,14 +33,32 @@ def render() -> None:
 
     video.write(frame)
 
+print("\nRendering in Progress")
 
+i = 0
 while (move := file.read(1)):
+    if (i % spacing == 0):
+        percentage = round(i / num_moves * 100, 1)
+        print(f"{percentage}% complete")
     game.sendKey(move)
 
-    if not game.update():
+    if game.isGameOver():
         run = False
 
     render()
 
+    i += 1
+
+
 video.release()
 file.close()
+
+print("Rendering finished successfully\n")
+
+print(f"Saved video as {'output'}.avi")
+seconds = 1 / FPS * num_moves
+if seconds < 60:
+    print(f"Duration of {seconds} seconds")
+else:
+    print(f"Durection of {int(seconds // 60)} min and {round(seconds % 60, 1)} seconds")
+

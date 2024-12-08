@@ -11,8 +11,8 @@ XCELLS, YCELLS = 80, 60
 game = Game(XCELLS, YCELLS)
 
 directions = "lrud"
-
 moves = []
+print_frequency = 20  # how often to update the user on the current score
 
 
 def move_direction(x: int, y: int, direction: str):
@@ -41,12 +41,15 @@ while not game.isGameOver():
             min_direction = (direction, dist)
         
     moves.append(min_direction[0])
-    game.sendKeyFast(min_direction[0])
-    game.update()
+    new_apple = game.sendKeyFast(min_direction[0])
+
+    if new_apple:
+        if game.getScore() % print_frequency == 0:
+            print(f"Score: {game.getScore()}")
 
 
 # Save the data to a file
 with open(f"saves/{save_file}.snake", "w") as f:
-    f.write(f"{XCELLS} {YCELLS} {seed}\n")
+    f.write(f"{XCELLS} {YCELLS} {seed} {len(moves)}\n")
     f.write("".join(moves))
 
