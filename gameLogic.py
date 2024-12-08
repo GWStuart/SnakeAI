@@ -10,27 +10,35 @@ class Game:
         self.snake = Snake(XCELLS, YCELLS, *Game.SNAKE_SPAWN_POSITION)
 
     """
-    Processes the given key press in the game.
-    If the key press is invalid then nothing is done
-    @param key the key press as a string
-    @returns True if the key press was valid and False otherwise
-    @ensures that snake.move is only called with a valid key
-    """
-    def sendKey(self, key: str) -> bool:
-        if (key in ("l", "r", "u", "d")):
-            self.snake.move(key)
-            return True
-        return False
-
-
-    """
-    Same as the sendKey function but removes safety checks making it marginally faster.
-    This is good if you are sure that the provided key is valid
-    @requires that the provided key is valid
+    Moves the snake in the given direction
+    @requires that the provided direction is valid
+    @param direction the direction in which to move the snake. If null then snake continues in current direction
     @returns True if the move results in an eaten apple and False otherwise
     """
-    def sendKeyFast(self, key: str):
-        return self.snake.move(key)
+    def moveSnake(self, direction: tuple[int, int]) -> bool:
+        if not direction:
+            direction = self.snake.direction
+        else:
+            match direction:
+                case "l":
+                    direction = (-1, 0)
+                case "r":
+                    direction = (1, 0)
+                case "u":
+                    direction = (0, -1)
+                case "d":
+                    direction = (0, 1)
+        return self.snake.move(direction)
+
+    """
+    Moves the snake's head to the specified new position.
+    This is essentially a more direct way of motion than the moveSnake
+    @requires that the provided head position is valid.
+    @param coordinates of the new head position
+    @returns True if the move results in an eaten apple and False otherwise
+    """
+    def moveSnakeDirect(self, newHead: tuple[int, int]) -> bool:
+        return self.snake.moveDirect(newHead)
 
     def getSnakeBody(self) -> list[tuple[int]]:
         return self.snake.body
@@ -67,22 +75,26 @@ class Snake:
         return random.randint(0, self.XCELLS - 1), random.randint(0, self.YCELLS - 1)
 
     """
-    Moves the snake in its direction of motion
-    @param direciton the direction in which to move the snake
+    Moves the snakes in the specified direction
+    @param the location to move the head to
+    @requires that the new head position is valid
     @returns True if an apple was eaten and false otherwise
     """
-    def move(self, direction: str):
-        match direction:
-            case "l":
-                self.x -= 1
-            case "r":
-                self.x += 1
-            case "u":
-                self.y -= 1
-            case _:
-                self.y += 1
-
+    def move(self, direction: tuple[int, int]) -> bool:
+        self.x += direction[0]
+        self.y += direction[1]
         self.body.append((self.x, self.y))
+        return self.update()
+
+    """
+    Moves the snakes head to the specified position
+    @param the location to move the head to
+    @requires that the new head position is valid
+    @returns True if an apple was eaten and false otherwise
+    """
+    def moveDirect(self, newHead: tuple[int, int]) -> bool:
+        self.x, self.y = newHead
+        self.body.append(newHead)
         return self.update()
 
     """

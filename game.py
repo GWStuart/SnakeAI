@@ -3,15 +3,14 @@ import pygame
 pygame.init()
 
 LENGTH, HEIGHT = 800, 600
-CELL_SIZE = 10
+CELL_SIZE = 20
 XCELLS, YCELLS = LENGTH / CELL_SIZE, HEIGHT / CELL_SIZE
 
 win = pygame.display.set_mode((LENGTH, HEIGHT))
 pygame.display.set_caption("Snake Game")
 
-snake_direction = "r"  # the starting snake direction
-
 game = Game(XCELLS, YCELLS)
+snake_direction = "r"  # default snake direction
 clock = pygame.time.Clock()
 
 def render(game: Game) -> None:
@@ -34,19 +33,15 @@ while run:
 
     keys = pygame.key.get_pressed()
     if keys[pygame.K_d]:
-        game.sendKey("r")
-        snake_direction = "r"
+        snake_direction = (1, 0)
     elif keys[pygame.K_a]:
-        game.sendKey("l")
-        snake_direction = "l"
+        snake_direction = (-1, 0) 
     elif keys[pygame.K_w]:
-        game.sendKey("u")
-        snake_direction = "u"
+        snake_direction = (0, -1)
     elif keys[pygame.K_s]:
-        game.sendKey("d")
-        snake_direction = "d"
-    else:
-        game.sendKey(snake_direction)
+        snake_direction = (0, 1) 
+
+    game.moveSnake(snake_direction)
 
     if game.isGameOver():
         print("GAME OVER")

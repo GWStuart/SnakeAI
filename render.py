@@ -52,15 +52,14 @@ while (move := file.read(1)):
     if (i % spacing == 0):
         percentage = round(i / num_moves * 100, 1)
         print(f"{percentage}% complete")
-    game.sendKey(move)
+
+    game.moveSnake(move)
 
     if game.isGameOver():
         run = False
 
     render()
-
     i += 1
-
 
 video.release()
 file.close()
@@ -72,5 +71,5 @@ seconds = 1 / FPS * num_moves
 if seconds < 60:
     print(f"Duration of {seconds} seconds")
 else:
-    print(f"Durection of {int(seconds // 60)} min and {round(seconds % 60, 1)} seconds")
+    print(f"Durection of {int(seconds // 60)} min and {round(seconds % 60, 1)} seconds\n")
 
