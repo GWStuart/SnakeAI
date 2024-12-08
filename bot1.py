@@ -26,6 +26,8 @@ def move_direction(x: int, y: int, direction: str):
         case "d":
             return (x, y + 1)
 
+print("\nStarting Simulated Game")
+
 while not game.isGameOver():
     apple = game.getApplePosition()
 
@@ -47,6 +49,9 @@ while not game.isGameOver():
         if game.getScore() % print_frequency == 0:
             print(f"Score: {game.getScore()}")
 
+print("Simulation Finished: GAME OVER\n")
+print(f"Final score was: {game.getScore()}")
+print(f"Results stored in saves/{save_file}.snake\n")
 
 # Save the data to a file
 with open(f"saves/{save_file}.snake", "w") as f:

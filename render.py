@@ -11,7 +11,7 @@ XCELLS, YCELLS, seed, num_moves = map(int, file.readline().split())
 LENGTH, HEIGHT = XCELLS * CELL_SIZE, YCELLS * CELL_SIZE
 random.seed(seed)
 
-FPS = 10 
+FPS = 30 
 PRINT_FREQUENCY = 10  # at which percent interval to print an update
 spacing = round(num_moves / PRINT_FREQUENCY)
 
@@ -24,12 +24,24 @@ game = Game(XCELLS, YCELLS)
 def render() -> None:
     frame = np.zeros((HEIGHT, LENGTH, 3), dtype=np.uint8)
 
-    for part in game.getSnakeBody():
+    body = game.getSnakeBody()
+    for i in range(len(body) - 1):
+        part = body[i]
         cv2.rectangle(frame, (part[0]*CELL_SIZE, part[1]*CELL_SIZE), (part[0]*CELL_SIZE+CELL_SIZE, part[1]*CELL_SIZE+CELL_SIZE), (0, 255, 0), -1)
+
+    head = body[-1]
+    cv2.rectangle(frame, (head[0]*CELL_SIZE, head[1]*CELL_SIZE), (head[0]*CELL_SIZE+CELL_SIZE, head[1]*CELL_SIZE+CELL_SIZE), (0, 200, 0), -1)
 
     apple = game.getApplePosition()
     cv2.rectangle(frame, (apple[0]*CELL_SIZE, apple[1]*CELL_SIZE), (apple[0]*CELL_SIZE+CELL_SIZE, apple[1]*CELL_SIZE+CELL_SIZE), (0, 0, 255), -1)
 
+    cv2.putText(frame, f"score: {game.getScore()}", (20, 20), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+
+    # add a white border
+    frame[:, 0] = np.array([255, 255, 255])
+    frame[:, LENGTH - 1] = np.array([255, 255, 255])
+    frame[0, :] = np.array([255, 255, 255])
+    frame[HEIGHT - 1, :] = np.array([255, 255, 255])
 
     video.write(frame)
 
