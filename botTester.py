@@ -1,5 +1,5 @@
 from gameLogic import Game
-from bot2 import Bot2
+from bot1 import Bot1
 import random
 
 save_file = "game3"
@@ -11,7 +11,7 @@ seed = random.randint(0, 2**32 - 1)
 random.seed(seed)
 
 game = Game(XCELLS, YCELLS)
-bot = Bot2(XCELLS, YCELLS, game)
+bot = Bot1(XCELLS, YCELLS, game)
 
 moves = []  # keep track of all the moves made
 
@@ -27,7 +27,6 @@ while not game.isGameOver():
     if new_apple:
         if game.getScore() % PRINT_FREQUENCY == 0:
             print(f"Score: {game.getScore()}")
-
 print("Simulation Finished\n")
 print(f"Final score was: {game.getScore()}\n")
 

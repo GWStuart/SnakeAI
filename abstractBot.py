@@ -26,13 +26,16 @@ class Bot:
         return Bot.direction_dict[change]
 
     """
-    Returns all cells that the snake could get to
+    Returns all valid cells that the snake could get to
+    Autoamtically filters out moves that result in a game over
     @returns four moves corresponding to the 4 directions are returned
     """
     def getMoves(self) -> list[tuple[int, int]]:
         result = []
-        for direction in Bot.directions:  # later modify to exclude direction where you run into self
-            result.append(self.moveDirection(direction))
+        for direction in Bot.directions:
+            newHead = self.moveDirection(direction)
+            if self.isValidMove(newHead):
+                result.append(newHead)
         return result
 
     """

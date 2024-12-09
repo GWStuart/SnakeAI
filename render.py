@@ -3,7 +3,7 @@ import numpy as np
 import cv2
 import random
 
-file = input("What file would you like to render: ")
+file = "game3"  # input("What file would you like to render: ")
 file = open(f"saves/{file}.snake")
 
 CELL_SIZE = 10
@@ -20,8 +20,26 @@ video = cv2.VideoWriter('./output.avi', fourcc, float(FPS), (LENGTH, HEIGHT))
 
 game = Game(XCELLS, YCELLS)
 
+def renderMD() -> None:
+    frame = np.zeros((HEIGHT, LENGTH, 3), dtype=np.uint8)
 
-def render() -> None:
+    body = game.getSnakeBody()
+    for i in range(len(body) - 1):
+        part = body[i]
+        cv2.rectangle(frame, (part[0]*CELL_SIZE, part[1]*CELL_SIZE), (part[0]*CELL_SIZE+CELL_SIZE, part[1]*CELL_SIZE+CELL_SIZE), (0, 255, 0), -1)
+
+    head = body[-1]
+    cv2.rectangle(frame, (head[0]*CELL_SIZE, head[1]*CELL_SIZE), (head[0]*CELL_SIZE+CELL_SIZE, head[1]*CELL_SIZE+CELL_SIZE), (0, 200, 0), -1)
+
+    apple = game.getApplePosition()
+    cv2.rectangle(frame, (apple[0]*CELL_SIZE, apple[1]*CELL_SIZE), (apple[0]*CELL_SIZE+CELL_SIZE, apple[1]*CELL_SIZE+CELL_SIZE), (0, 0, 255), -1)
+
+    cv2.putText(frame, f"score: {game.getScore()}", (20, 20), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+
+    video.write(frame)
+
+
+def renderHD() -> None:
     frame = np.zeros((HEIGHT, LENGTH, 3), dtype=np.uint8)
 
     body = game.getSnakeBody()
@@ -58,7 +76,7 @@ while (move := file.read(1)):
     if game.isGameOver():
         run = False
 
-    render()
+    renderMD()
     i += 1
 
 video.release()
