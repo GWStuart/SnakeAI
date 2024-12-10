@@ -65,7 +65,7 @@ match quality.lower():
 game = Game(XCELLS, YCELLS)
 
 def renderTile(frame, x: int, y: int, colour: tuple[int, int, int]) -> None:
-    cv2.rectangle(frame, (1 + x*CELL_SIZE, 1 + y*CELL_SIZE), (1 + x*CELL_SIZE+CELL_SIZE, 1 + y*CELL_SIZE+CELL_SIZE), colour, -1)
+    cv2.rectangle(frame, (1 + x*CELL_SIZE, 1 + y*CELL_SIZE), (1 + (x+1)*CELL_SIZE, 1 + (y+1)*CELL_SIZE), colour, -1)
 
 def renderLD() -> None:
     frame = np.zeros((HEIGHT, LENGTH), dtype=np.uint8)

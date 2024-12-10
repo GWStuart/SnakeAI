@@ -1,6 +1,7 @@
 from gameLogic import Game
 from bot1 import Bot1
 import random
+import time
 
 save_file = "game3"
 
@@ -17,6 +18,7 @@ moves = []  # keep track of all the moves made
 
 print("\nStarting Simulation")
 
+start_time = time.time()
 while not game.isGameOver():
     move = bot.makeMove()
 
@@ -28,10 +30,12 @@ while not game.isGameOver():
         if game.getScore() % PRINT_FREQUENCY == 0:
             print(f"Score: {game.getScore()}")
 print("Simulation Finished\n")
-print(f"Final score was: {game.getScore()}\n")
+print(f"Final score was: {game.getScore()}")
+run_time = time.time() - start_time
+print(f"Time to execute was {run_time} seconds")
 
 # Save the data to a file
-print(f"Currently Writing results to save file")
+print("\nWriting results to save file")
 with open(f"saves/{save_file}.snake", "w") as f:
     f.write(f"{XCELLS} {YCELLS} {seed} {len(moves)}\n")
     f.write("".join(moves))
