@@ -67,12 +67,15 @@ class Snake:
         self.x = x
         self.y = y
 
-        self.apple = self.getRandomCell()
         self.score = 0
         self.body = [(x, y)]
+        self.apple = self.getRandomCell()
 
     def getRandomCell(self) -> tuple[int, int]:
-        return random.randint(0, self.XCELLS - 1), random.randint(0, self.YCELLS - 1)
+        x, y = random.randint(0, self.XCELLS - 1), random.randint(0, self.YCELLS - 1)
+        while (x, y) in self.body:
+            x, y = random.randint(0, self.XCELLS - 1), random.randint(0, self.YCELLS - 1)
+        return (x, y)
 
     """
     Moves the snakes in the specified direction

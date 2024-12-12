@@ -9,6 +9,8 @@ class Bot:
         self.YCELLS = YCELLS
         self.game = game
 
+        self.flood_cells = dict() 
+
     """
     Make a move based on the given game
     @returns the move as a snake direction
@@ -59,4 +61,50 @@ class Bot:
         if newHead in self.game.getSnakeBody():
             return False
         return 0 <= newHead[0] < self.XCELLS and 0 <= newHead[1] < self.YCELLS
+
+    
+    """
+    Pretty Efficient flood fill algorithm
+    In future some further optimisations could be perform using set caching and potentially preallocated boolean arrays
+    @param the x and y position to peform the floodfill
+    @param additions: extra cells to include as the snake body 
+    @returns the number of cells reached by the floodfill
+    """
+    def floodfill(self, x, y, additions: set[tuple[int, int]]) -> int:
+        snake_set = set(self.game.getSnakeBody())
+        snake_set.update(additions)
+
+        startx, starty = x, y
+        
+        filled = set()
+    
+        stack = [(x, y)]
+        while stack:
+            x, y = stack.pop()
+            if (x, y) in self.flood_cells:
+                return self.flood_cells[(x, y)]
+            
+            if (x, y) in filled:
+                continue
+    
+            filled.add((x, y))
+    
+            if x > 0 and (x - 1, y) not in snake_set and (x - 1, y) not in filled:
+                stack.append((x - 1, y))
+            if x < self.XCELLS - 1 and (x + 1, y) not in snake_set and (x + 1, y) not in filled:
+                stack.append((x + 1, y))
+            if y > 0 and (x, y - 1) not in snake_set and (x, y - 1) not in filled:
+                stack.append((x, y - 1))
+            if y < self.YCELLS - 1 and (x, y + 1) not in snake_set and (x, y + 1) not in filled:
+                stack.append((x, y + 1))
+    
+        result = len(filled)
+        self.flood_cells[(startx, starty)] = result
+        return result
+
+    """
+    Tidys up a few things that should be done after ending a move
+    """
+    def endMove(self):
+        self.flood_cells = dict()
 

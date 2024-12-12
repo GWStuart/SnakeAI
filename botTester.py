@@ -1,18 +1,19 @@
 from gameLogic import Game
-from bot1 import Bot1
+# from bot1 import Bot1
+from bot2 import Bot2
 import random
 import time
 
 save_file = "game3"
 
 XCELLS, YCELLS = 80, 60
-PRINT_FREQUENCY = 10  # after how many apples should a log message be printed
+PRINT_FREQUENCY = 5  # after how many apples should a log message be printed
 
 seed = random.randint(0, 2**32 - 1)
 random.seed(seed)
 
 game = Game(XCELLS, YCELLS)
-bot = Bot1(XCELLS, YCELLS, game)
+bot = Bot2(XCELLS, YCELLS, game)
 
 moves = []  # keep track of all the moves made
 
