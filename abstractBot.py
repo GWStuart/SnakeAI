@@ -33,11 +33,11 @@ class Bot:
     Autoamtically filters out moves that result in a game over
     @returns four moves corresponding to the 4 directions are returned
     """
-    def getMoves(self) -> list[tuple[int, int]]:
+    def getMoves(self, snake: list[tuple[int, int]]) -> list[tuple[int, int]]:
         result = []
         for direction in Bot.directions:
-            newHead = self.moveDirection(direction)
-            if self.isValidMove(newHead):
+            newHead = self.moveDirection(snake, direction)
+            if self.isValidMove(snake, newHead):
                 result.append(newHead)
         return result
 

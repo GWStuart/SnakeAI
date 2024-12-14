@@ -13,7 +13,7 @@ seed = random.randint(0, 2**32 - 1)
 random.seed(seed)
 
 game = Game(XCELLS, YCELLS)
-bot = Bot2(XCELLS, YCELLS, game)
+bot = Bot2(XCELLS, YCELLS)
 
 moves = []  # keep track of all the moves made
 
@@ -21,7 +21,7 @@ print("\nStarting Simulation")
 
 start_time = time.time()
 while not game.isGameOver():
-    move = bot.makeMove()
+    move = bot.makeMove(game.getSnakeBody(), game.getApplePosition())
 
     moves.append(move)
 
@@ -30,6 +30,7 @@ while not game.isGameOver():
     if new_apple:
         if game.getScore() % PRINT_FREQUENCY == 0:
             print(f"Score: {game.getScore()}")
+
 print("Simulation Finished\n")
 print(f"Final score was: {game.getScore()}")
 run_time = time.time() - start_time

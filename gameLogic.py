@@ -16,18 +16,15 @@ class Game:
     @returns True if the move results in an eaten apple and False otherwise
     """
     def moveSnake(self, direction: tuple[int, int]) -> bool:
-        if not direction:
-            direction = self.snake.direction
-        else:
-            match direction:
-                case "l":
-                    direction = (-1, 0)
-                case "r":
-                    direction = (1, 0)
-                case "u":
-                    direction = (0, -1)
-                case "d":
-                    direction = (0, 1)
+        match direction:
+            case "l":
+                direction = (-1, 0)
+            case "r":
+                direction = (1, 0)
+            case "u":
+                direction = (0, -1)
+            case "d":
+                direction = (0, 1)
         return self.snake.move(direction)
 
     """

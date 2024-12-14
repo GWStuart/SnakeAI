@@ -1,5 +1,6 @@
 import pygame
 import timeit
+from bot2 import Bot2
 pygame.init()
 
 LENGTH, WIDTH = 800, 600
@@ -18,6 +19,8 @@ apple = None
 highlights = []
 
 timeout = {"obstacles": False, "highlights": False}  # used to determine if a block type is active
+
+bot = Bot2(XCELLS, YCELLS)
 
 
 def render():
@@ -111,6 +114,12 @@ while run:
                     apple = mouse
             if event.key == pygame.K_s:  # spawn the snake
                 snake_sim = [get_mouse_cell()]
+            if event.key == pygame.K_SPACE:  # move the snake
+                if snake_sim:
+                    if not apple:
+                        apple = (0, 0)
+                    move = bot.makeMove(obstacles + snake_sim, apple)
+                    snake_sim.append(bot.moveDirection(snake_sim, move))
 
     pressed = pygame.mouse.get_pressed(3)
     if pressed[0]:  # add obstacles with left click
