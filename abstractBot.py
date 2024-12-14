@@ -4,26 +4,27 @@ class Bot:
     directions = "lrud"  # left, right, up and down
     direction_dict = {(1, 0): "r", (-1, 0): "l", (0, -1): "u", (0, 1): "d"}
 
-    def __init__(self, XCELLS: int, YCELLS: int, game: Game):
+    def __init__(self, XCELLS: int, YCELLS: int):
         self.XCELLS = XCELLS
         self.YCELLS = YCELLS
-        self.game = game
 
         self.flood_cells = dict() 
 
     """
-    Make a move based on the given game
-    @returns the move as a snake direction
+    Make a snake move based on the provided information
+    @param snake the snake's body with the head as the last element
+    @param apple the cell position of the apple
+    @returns a string representing the move as a snake direction
     """
-    def makeMove(self) -> str:
+    def makeMove(self, snake: list[tuple[int, int]], apple: tuple[int, int]) -> str:
         pass
 
     """
     Used to get the direction associated with a given direct move
     @returns the direction string representing the given move
     """
-    def getMoveDirection(self, newHead: tuple[int, int]):
-        head = self.game.getSnakeHead()
+    def getMoveDirection(self, snake: list[tuple[int, int]], newHead: tuple[int, int]):
+        head = snake[-1]
         change = (newHead[0] - head[0], newHead[1] - head[1])
         return Bot.direction_dict[change]
 
@@ -45,8 +46,8 @@ class Bot:
     @returns the new head position the snake would be if it moved in the given direction
     @requires that the given direction is valid
     """
-    def moveDirection(self, direction: str) -> tuple[int, int]:
-        head = self.game.getSnakeHead()
+    def moveDirection(self, snake: list[tuple[int, int]], direction: str) -> tuple[int, int]:
+        head = snake[-1]
         match direction:
             case "l":
                 return (head[0] - 1, head[1])
@@ -57,12 +58,17 @@ class Bot:
             case "d":
                 return (head[0], head[1] + 1)
 
-    def isValidMove(self, newHead: tuple[int, int]):
-        if newHead in self.game.getSnakeBody():
+    """
+    Determine if moving to the given cell results in a valid move.
+    A valid move is defined as one where the snake is still alive
+    @requires that the provided cells in snake are all already valid
+    @returns True if the move is valid and False otherwise
+    """
+    def isValidMove(self, snake: list[tuple[int, int]], newHead: tuple[int, int]):
+        if newHead in snake:
             return False
         return 0 <= newHead[0] < self.XCELLS and 0 <= newHead[1] < self.YCELLS
 
-    
     """
     Pretty Efficient flood fill algorithm
     In future some further optimisations could be perform using set caching and potentially preallocated boolean arrays
@@ -70,9 +76,8 @@ class Bot:
     @param additions: extra cells to include as the snake body 
     @returns the number of cells reached by the floodfill
     """
-    def floodfill(self, x, y, additions: set[tuple[int, int]]) -> int:
-        snake_set = set(self.game.getSnakeBody())
-        snake_set.update(additions)
+    def floodfill(self, x, y, snake: list[tuple[int, int]]) -> int:
+        snake_set = set(snake)
 
         startx, starty = x, y
         

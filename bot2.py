@@ -2,15 +2,13 @@ from abstractBot import Bot
 import math
 
 class Bot2(Bot):
-    def makeMove(self):
-        apple = self.game.getApplePosition()
-
+    def makeMoveDirect(self, snake: list[tuple[int, int]], apple: tuple[int, int]):
         moves = self.getMoves()
 
         if len(moves) == 0:
             return "l"  # the game has been lost
 
-        available_squares = self.XCELLS * self.YCELLS - len(self.game.getSnakeBody())
+        available_squares = self.XCELLS * self.YCELLS - len(snake)
 
         score = []
         for move in moves:
