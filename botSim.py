@@ -38,7 +38,10 @@ def render():
         pygame.draw.line(win, colour2, (tile[0]*CELL_SIZE, (tile[1]+1)*CELL_SIZE), ((tile[0]+1)*CELL_SIZE, tile[1]*CELL_SIZE))
 
     for tile in snake_sim:
-        pygame.draw.rect(win, (0, 255, 0), (tile[0]*CELL_SIZE, tile[1]*CELL_SIZE, CELL_SIZE, CELL_SIZE))
+        pygame.draw.rect(win, (0, 220, 0), (tile[0]*CELL_SIZE, tile[1]*CELL_SIZE, CELL_SIZE, CELL_SIZE))
+
+    if len(snake_sim) > 1:
+        pygame.draw.lines(win, (255, 255, 255), False, list(map(lambda x: ((x[0]+0.5)*CELL_SIZE, (x[1]+0.5)*CELL_SIZE), snake_sim)), 1)
     
     if apple:
         pygame.draw.rect(win, (255, 0, 0), (apple[0]*CELL_SIZE, apple[1]*CELL_SIZE, CELL_SIZE, CELL_SIZE))
@@ -114,6 +117,9 @@ while run:
                     apple = mouse
             if event.key == pygame.K_s:  # spawn the snake
                 snake_sim = [get_mouse_cell()]
+            if event.key == pygame.K_u:  # undo last move
+                if len(snake_sim) > 1:
+                    snake_sim.pop()
             if event.key == pygame.K_SPACE:  # move the snake
                 if snake_sim:
                     if not apple:

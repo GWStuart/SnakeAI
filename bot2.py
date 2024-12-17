@@ -12,10 +12,11 @@ class Bot2(Bot):
 
         score = []
         for move in moves:
-            trapped_squares = available_squares - self.floodfill(*move, set())
+            trapped_squares = available_squares - self.floodfill(*move, set(snake))
             distance = math.dist(move, apple)
             score.append(trapped_squares * 300 + distance)
 
         move = min(zip(score, moves), key=lambda x: x[0])[1]
+        self.endMove()
         return self.getMoveDirection(snake, move)
 
