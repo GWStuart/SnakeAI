@@ -1,6 +1,7 @@
 import pygame
 import timeit
 from bot2 import Bot2
+import pickle
 pygame.init()
 
 LENGTH, WIDTH = 800, 600
@@ -41,7 +42,10 @@ def render():
         pygame.draw.rect(win, (0, 220, 0), (tile[0]*CELL_SIZE, tile[1]*CELL_SIZE, CELL_SIZE, CELL_SIZE))
 
     if len(snake_sim) > 1:
-        pygame.draw.lines(win, (255, 255, 255), False, list(map(lambda x: ((x[0]+0.5)*CELL_SIZE, (x[1]+0.5)*CELL_SIZE), snake_sim)), 1)
+        pygame.draw.lines(win, (0, 200, 0), False, list(map(lambda x: ((x[0]+0.5)*CELL_SIZE, (x[1]+0.5)*CELL_SIZE), snake_sim)), 10)
+
+    for tile in snake_sim:
+        pygame.draw.circle(win, (0, 200, 0), ((tile[0]+0.5)*CELL_SIZE, (tile[1]+0.5)*CELL_SIZE), 4)
     
     if apple:
         pygame.draw.rect(win, (255, 0, 0), (apple[0]*CELL_SIZE, apple[1]*CELL_SIZE, CELL_SIZE, CELL_SIZE))
@@ -115,7 +119,7 @@ while run:
                     apple = None
                 else:
                     apple = mouse
-            if event.key == pygame.K_s:  # spawn the snake
+            if event.key == pygame.K_b:  # spawn the snake bot
                 snake_sim = [get_mouse_cell()]
             if event.key == pygame.K_u:  # undo last move
                 if len(snake_sim) > 1:
@@ -126,6 +130,17 @@ while run:
                         apple = (0, 0)
                     move = bot.makeMove(obstacles + snake_sim, apple)
                     snake_sim.append(bot.moveDirection(snake_sim, move))
+            if event.key == pygame.K_s:  # save the current game state
+                pygame.quit()
+                file_name = input("Enter the name of the file to save to: ")
+                with open(f"saves/{file_name}.pkl", "wb") as file:
+                    pickle.dump((snake_sim, obstacles, apple), file)
+                print(f"Saved file as saves/{file_name}.pkl")
+                quit()
+            if event.key == pygame.K_o:  # open a save file
+                file_name = input("Enter the name of the file to open: ")
+                with open(f"saves/{file_name}.pkl", "rb") as file:
+                    snake_sim, obstacles, apple = pickle.load(file)
 
     pressed = pygame.mouse.get_pressed(3)
     if pressed[0]:  # add obstacles with left click
