@@ -117,11 +117,14 @@ def renderHD() -> None:
 
     body = game.getSnakeBody()
     for i in range(len(body) - 1):
-        part = body[i]
-        renderTile(frame, *part, (0, 255, 0))
+        renderTile(frame, *body[i], (0, 255, 0))
 
     head = body[-1]
     renderTile(frame, *head, (0, 200, 0))
+
+    for i in range(len(body) - 1):
+        get_center = lambda part: (round((part[0] + 0.5) * CELL_SIZE), round((part[1] + 0.5) * CELL_SIZE))
+        cv2.line(frame, get_center(body[i]), get_center(body[i+1]), (0, 200, 0), 3)
 
     apple = game.getApplePosition()
     renderTile(frame, *apple, (0, 0, 255))

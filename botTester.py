@@ -1,13 +1,23 @@
+from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from gameLogic import Game
 # from bot1 import Bot1
 from bot2 import Bot2
 import random
 import time
 
-save_file = "game3"
+parser = ArgumentParser(prog="render", description="Used to test snake bots", formatter_class=RawDescriptionHelpFormatter)
 
-# XCELLS, YCELLS = 80, 60
-XCELLS, YCELLS = 16, 12
+# Get command line arguments
+parser.add_argument("-o", "--output", help="The file to save the output to")
+args = parser.parse_args()
+
+if args.output:
+    save_file = args.output
+else:
+    save_file = "game_output"
+
+XCELLS, YCELLS = 80, 60
+# XCELLS, YCELLS = 16, 12
 PRINT_FREQUENCY = 5  # after how many apples should a log message be printed
 
 seed = random.randint(0, 2**32 - 1)
