@@ -1,21 +1,33 @@
+from argparse import ArgumentParser, RawDescriptionHelpFormatter
 import pygame
 import timeit
+from bot1 import Bot1
 from bot2 import Bot2
 import pickle
 pygame.init()
+
+parser = ArgumentParser(prog="render", description="Used to simulate bot games", formatter_class=RawDescriptionHelpFormatter)
+
+# Add command line argument
+parser.add_argument("-o", "--open", help="The file to load on startup")
+args = parser.parse_args()
+
+if args.open:
+    with open(f"saves/{args.open}.pkl", "rb") as file:
+        snake_sim, obstacles, apple = pickle.load(file)
+else:
+    snake_sim = []  # holds the simulated snake
+    obstacles = []
+    apple = None
 
 LENGTH, WIDTH = 800, 600
 win = pygame.display.set_mode((LENGTH, WIDTH))
 pygame.display.set_caption("Bot Simulator")
 
-CELL_SIZE = 50
+CELL_SIZE = 10
 XCELLS, YCELLS = LENGTH // CELL_SIZE, WIDTH // CELL_SIZE
 
 clock = pygame.time.Clock()
-
-snake_sim = []  # holds the simulated snake
-obstacles = []
-apple = None
 
 highlights = []
 
@@ -84,6 +96,11 @@ def floodfill(x, y) -> set[tuple[int, int]]:
 
     return filled
 
+def find_apple(obstructions: list[tuple[int, int]]) -> None:
+    while apple not in obstructions:
+        move = bot.makeMove(obstructions, apple)
+        obstructions.append(bot.moveDirection(obstructions, move))
+
 
 def get_mouse_cell() -> tuple[int, int]:
     mouse = pygame.mouse.get_pos()
@@ -141,6 +158,16 @@ while run:
                 file_name = input("Enter the name of the file to open: ")
                 with open(f"saves/{file_name}.pkl", "rb") as file:
                     snake_sim, obstacles, apple = pickle.load(file)
+            if event.key == pygame.K_t and snake_sim and apple:  # peform a speed test
+                # tests how long it takes for the snake to get to the apple
+                obstructions = obstacles + snake_sim
+                print("Starting speed test")
+
+                time = timeit.timeit(lambda: find_apple(obstructions.copy()), number=3)
+                print(f"found apple in {time} seconds")
+            if event.key == pygame.K_i:
+                print(obstacles + snake_sim)
+                
 
     pressed = pygame.mouse.get_pressed(3)
     if pressed[0]:  # add obstacles with left click
@@ -161,6 +188,12 @@ while run:
                 highlights.remove(tile)
             else:
                 highlights.append(tile)
+    if keys[pygame.K_p]:  # play the bot animation ASAP
+        if snake_sim:
+            if not apple:
+                apple = (0, 0)
+            move = bot.makeMove(obstacles + snake_sim, apple)
+            snake_sim.append(bot.moveDirection(snake_sim, move))
 
     render()
     clock.tick(60)

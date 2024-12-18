@@ -1,4 +1,5 @@
 from gameLogic import Game
+import math
 
 class Bot:
     directions = "lrud"  # left, right, up and down
@@ -70,41 +71,165 @@ class Bot:
         return 0 <= newHead[0] < self.XCELLS and 0 <= newHead[1] < self.YCELLS
 
     """
+    A fast search to quickly determine if there may be a path connecting two points
+    @returns True if there is definitly a path connecting the two points. False if inconclusive
+    @requires that the (startx, starty) and (endx, endy) are valid tiles
+    """
+    def fast_search(self, snake_set, startx, starty, endx, endy) -> bool:
+        x, y = startx, starty
+        stack = {((x, y), None)}
+        checked = set()
+    
+        for i in range(5):  # can tweak this number
+            result = min(stack, key=lambda x: x[1])
+            stack.remove(result)
+            x, y = result[0][0], result[0][1]
+            checked.add((x, y))
+    
+            for dx, dy in [(1, 0), (-1, 0), (0, 1), (0, -1)]:
+                newx, newy = x + dx, y + dy
+                if (newx, newy) not in snake_set and (newx, newy) not in checked and (newx, newy) not in stack:
+                    if newx == endx and newy == endy:
+                        return True
+                    stack.add(((newx, newy), math.dist((newx, newy), (endx, endy))))
+
+            if not stack:
+                return False
+
+        return False
+
+    """
     Pretty Efficient flood fill algorithm
     In future some further optimisations could be perform using set caching and potentially preallocated boolean arrays
     @param the x and y position to peform the floodfill
     @param additions: extra cells to include as the snake body 
+    @requires that the x, y position is empty
     @returns the number of cells reached by the floodfill
     """
+    def BACKUP(self, x, y, snake: list[tuple[int, int]]) -> int:
+        snake_set = set(snake)
+
+        if self.flood_cells:
+            endx, endy = list(self.flood_cells.keys())[0]
+            if self.fast_search(snake_set, x, y, endx, endy): 
+                return self.flood_cells[(endx, endy)]
+
+        startx, starty = x, y
+
+        filled = set()
+        stack = {(x, y)}
+
+        while stack:
+            x, y = stack.pop()
+            filled.add((x, y))
+    
+            if x > 0 and (x - 1, y) not in snake_set and (x - 1, y) not in filled:
+                stack.add((x - 1, y))
+            if x < self.XCELLS - 1 and (x + 1, y) not in snake_set and (x + 1, y) not in filled:
+                stack.add((x + 1, y))
+            if y > 0 and (x, y - 1) not in snake_set and (x, y - 1) not in filled:
+                stack.add((x, y - 1))
+            if y < self.YCELLS - 1 and (x, y + 1) not in snake_set and (x, y + 1) not in filled:
+                stack.add((x, y + 1))
+    
+        result = len(filled)
+        self.flood_cells[(startx, starty)] = result
+        return result
+
     def floodfill(self, x, y, snake: list[tuple[int, int]]) -> int:
         snake_set = set(snake)
+
+        if self.flood_cells:
+            endx, endy = list(self.flood_cells.keys())[0]
+            if self.fast_search(snake_set, x, y, endx, endy): 
+                return self.flood_cells[(endx, endy)]
 
         startx, starty = x, y
         
         filled = set()
+        continue_search = True
+
+        i = 0
     
-        stack = [(x, y)]
+        stack = {(x, y)}
         while stack:
             x, y = stack.pop()
-            if (x, y) in self.flood_cells:
-                return self.flood_cells[(x, y)]
-            
-            if (x, y) in filled:
-                continue
     
             filled.add((x, y))
     
             if x > 0 and (x - 1, y) not in snake_set and (x - 1, y) not in filled:
-                stack.append((x - 1, y))
+                if continue_search and (x - 1, y) in self.flood_cells:
+                    result = self.flood_cells[(x - 1, y)]
+                    self.flood_cells[(startx, starty)] = result
+                    return result
+                stack.add((x - 1, y))
             if x < self.XCELLS - 1 and (x + 1, y) not in snake_set and (x + 1, y) not in filled:
-                stack.append((x + 1, y))
+                if continue_search and (x + 1, y) in self.flood_cells:
+                    result = self.flood_cells[(x + 1, y)]
+                    self.flood_cells[(startx, starty)] = result
+                    return result
+                stack.add((x + 1, y))
             if y > 0 and (x, y - 1) not in snake_set and (x, y - 1) not in filled:
-                stack.append((x, y - 1))
+                if continue_search and (x, y - 1) in self.flood_cells:
+                    result = self.flood_cells[(x, y - 1)]
+                    self.flood_cells[(startx, starty)] = result
+                    return result
+                stack.add((x, y - 1))
             if y < self.YCELLS - 1 and (x, y + 1) not in snake_set and (x, y + 1) not in filled:
-                stack.append((x, y + 1))
+                if continue_search and (x, y + 1) in self.flood_cells:
+                    result = self.flood_cells[(x, y + 1)]
+                    self.flood_cells[(startx, starty)] = result
+                    return result
+                stack.add((x, y + 1))
+
+            if continue_search:
+                i += 1
+                if i > 2:  # can tweak this number 200
+                    continue_search = False
     
         result = len(filled)
         self.flood_cells[(startx, starty)] = result
+        return result
+
+    """
+    Multi floodfill
+    """
+    def trapped_squares(self, snake: list[tuple[int, int]], cells: list[tuple[int, int]]) -> list[int]:
+        snake_set = set(snake)
+        result = [None] * len(cells)
+        available_squares = self.XCELLS * self.YCELLS - len(snake_set)
+
+        for i, cell in enumerate(cells):
+            if result[i]:
+                continue
+
+            indexes = [i]
+            filled = set()
+
+            stack = {cell}
+            REMOVE_LATER = False
+            while stack:
+                x, y = stack.pop()
+
+                if REMOVE_LATER and (x, y) in cells:
+                    indexes.append(cells.index((x, y)))
+
+                filled.add((x, y))
+        
+                if x > 0 and (x - 1, y) not in snake_set and (x - 1, y) not in filled:
+                    stack.add((x - 1, y))
+                if x < self.XCELLS - 1 and (x + 1, y) not in snake_set and (x + 1, y) not in filled:
+                    stack.add((x + 1, y))
+                if y > 0 and (x, y - 1) not in snake_set and (x, y - 1) not in filled:
+                    stack.add((x, y - 1))
+                if y < self.YCELLS - 1 and (x, y + 1) not in snake_set and (x, y + 1) not in filled:
+                    stack.add((x, y + 1))
+
+                REMOVE_LATER = True
+        
+            for a in indexes:
+                result[a] = available_squares - len(filled)
+       
         return result
 
     """
