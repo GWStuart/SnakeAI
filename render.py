@@ -1,6 +1,7 @@
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from sys import argv
 from gameLogic import Game
+import time
 import numpy as np
 import cv2
 import random
@@ -31,21 +32,22 @@ if args.output:
 else:
     output_file = f"saves/{file}.mp4"
 
+# Process the data
+file = open(f"saves/{file}.snake")
+
+XCELLS, YCELLS, seed, num_moves = map(int, file.readline().split())
+
 if args.scale: 
     CELL_SIZE = int(args.scale)
 else:
     match quality.lower():
         case "low":
-            CELL_SIZE = 4
+            CELL_SIZE = round(360 / XCELLS)  # 260 x pixels
         case "medium":
-            CELL_SIZE = 8
+            CELL_SIZE = round(768 / XCELLS)  # 768 x pixels
         case "high":
-            CELL_SIZE = 16
+            CELL_SIZE = round(1280 / XCELLS)  # 1280 x pixels
 
-# Process the data
-file = open(f"saves/{file}.snake")
-
-XCELLS, YCELLS, seed, num_moves = map(int, file.readline().split())
 LENGTH, HEIGHT = XCELLS * CELL_SIZE + 2, YCELLS * CELL_SIZE + 2
 random.seed(seed)
 
@@ -151,6 +153,7 @@ match quality.lower():
 
 
 print("\nRendering in Progress")
+start_time = time.time()
 
 i = 0
 while (move := file.read(1)):
@@ -169,12 +172,10 @@ while (move := file.read(1)):
 video.release()
 file.close()
 
-print("Rendering finished successfully\n")
+print(f"Rendering finished successfully")
+print("Time to render: " + time.strftime("%H:%M:%S", time.gmtime(time.time() - start_time)) + "\n")
 
 print(f"Saved video as {output_file}")
 seconds = 1 / FPS * num_moves
-if seconds < 60:
-    print(f"Duration of {seconds} seconds")
-else:
-    print(f"Durection of {int(seconds // 60)} min and {round(seconds % 60, 1)} seconds\n")
+print("Video duration: " + time.strftime("%H:%M:%S", time.gmtime(seconds)) + "\n")
 

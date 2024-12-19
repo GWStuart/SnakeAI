@@ -165,9 +165,8 @@ while run:
 
                 time = timeit.timeit(lambda: find_apple(obstructions.copy()), number=3)
                 print(f"found apple in {time} seconds")
-            if event.key == pygame.K_i:
-                print(obstacles + snake_sim)
-                
+            if event.key == pygame.K_i:  # use this for what you want
+                pass
 
     pressed = pygame.mouse.get_pressed(3)
     if pressed[0]:  # add obstacles with left click

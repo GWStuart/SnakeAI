@@ -1,4 +1,5 @@
 from gameLogic import Game
+import numpy as np
 import math
 
 class Bot:
@@ -79,7 +80,7 @@ class Bot:
     """
     def trapped_squares_quick(self, snake: list[tuple[int, int]], cells: list[tuple[int, int]]):
         snake_set = set(snake)
-        available_squares = self.XCELLS * self.YCELLS - len(snake_set)
+        available_squares = self.XCELLS * self.YCELLS - len(snake)
 
         cell_indices = {cell: i for i, cell in enumerate(cells)}
 
@@ -113,7 +114,6 @@ class Bot:
                 if y < self.YCELLS - 1 and (x, y + 1) not in snake_set and (x, y + 1) not in filled:
                     stack.add((x, y + 1))
         
-            # result = [available_squares - len(filled) if i in indexes else result[i] for i in range(len(cells))]
             trapped = available_squares - len(filled)
             for idx in indexes:
                 result[idx] = trapped

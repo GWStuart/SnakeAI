@@ -16,8 +16,8 @@ if args.output:
 else:
     save_file = "game_output"
 
-XCELLS, YCELLS = 80, 60
-# XCELLS, YCELLS = 16, 12
+# XCELLS, YCELLS = 80, 60
+XCELLS, YCELLS = 16, 12
 PRINT_FREQUENCY = 5  # after how many apples should a log message be printed
 
 seed = random.randint(0, 2**32 - 1)
