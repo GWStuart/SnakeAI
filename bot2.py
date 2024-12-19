@@ -8,14 +8,8 @@ class Bot2(Bot):
         if len(moves) == 0:
             return "l"  # the game has been lost
 
-        trapped = self.trapped_squares(snake, moves)
-
-#        score = []
-#        for move in moves:
-#            trapped_squares = available_squares - self.floodfill(*move, set(snake))
-#            distance = math.dist(move, apple)
-#            score.append(trapped_squares * 300 + distance)
-        
+        trapped = self.trapped_squares_quick(snake, moves)
+       
         score = []
         for move, trapped in zip(moves, trapped):
             distance = math.dist(move, apple)
@@ -23,6 +17,5 @@ class Bot2(Bot):
 
         move = min(zip(score, moves), key=lambda x: x[0])[1]
 
-        self.endMove()
         return self.getMoveDirection(snake, move)
 
