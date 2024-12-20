@@ -5,6 +5,7 @@ import time
 import numpy as np
 import cv2
 import random
+import math
 
 description = """
 This script is used to generate a video output file of a saved snake game
@@ -118,20 +119,21 @@ def renderHD() -> None:
     frame = np.zeros((HEIGHT, LENGTH, 3), dtype=np.uint8)
 
     body = game.getSnakeBody()
-    for i in range(len(body) - 1):
-        renderTile(frame, *body[i], (0, 255, 0))
+    # for i in range(len(body) - 1):
+    #     renderTile(frame, *body[i], (0, 255, 0))
 
-    head = body[-1]
-    renderTile(frame, *head, (0, 200, 0))
+    # head = body[-1]
+    # renderTile(frame, *head, (0, 200, 0))
 
+    get_center = lambda part: (round((part[0] + 0.5) * CELL_SIZE), round((part[1] + 0.5) * CELL_SIZE))
     for i in range(len(body) - 1):
-        get_center = lambda part: (round((part[0] + 0.5) * CELL_SIZE), round((part[1] + 0.5) * CELL_SIZE))
-        cv2.line(frame, get_center(body[i]), get_center(body[i+1]), (0, 200, 0), 3)
+        cv2.line(frame, get_center(body[i]), get_center(body[i+1]), (0, 200, 0), math.ceil(0.75 * CELL_SIZE))
 
     apple = game.getApplePosition()
-    renderTile(frame, *apple, (0, 0, 255))
+    # renderTile(frame, *apple, (0, 0, 255))
+    cv2.circle(frame, get_center(apple), math.ceil(0.37 * CELL_SIZE), (0, 0, 255), -1)
 
-    cv2.putText(frame, f"score: {game.getScore()}", (20, 20), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
+    cv2.putText(frame, f"score: {game.getScore()}", (20, 20), cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 1, cv2.LINE_AA)
 
     # add a white border
     if border:
