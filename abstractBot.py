@@ -1,5 +1,4 @@
 from gameLogic import Game
-import numpy as np
 import math
 
 class Bot:

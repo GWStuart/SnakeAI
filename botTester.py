@@ -1,9 +1,9 @@
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from gameLogic import Game
-# from bot1 import Bot1
-from bot2 import Bot2
+import bot1, bot2
 import random
 import time
+import os
 
 parser = ArgumentParser(prog="render", description="Used to test snake bots", formatter_class=RawDescriptionHelpFormatter)
 
@@ -11,20 +11,23 @@ parser = ArgumentParser(prog="render", description="Used to test snake bots", fo
 parser.add_argument("-o", "--output", help="The file to save the output to")
 args = parser.parse_args()
 
+# Results are saved at ./saves/{save_file}
+if not os.path.exists("./saves"):
+    os.mkdir("./saves")
 if args.output:
     save_file = args.output
 else:
     save_file = "game_output"
 
-# XCELLS, YCELLS = 80, 60
-XCELLS, YCELLS = 16, 12
+XCELLS, YCELLS = 80, 60
+# XCELLS, YCELLS = 16, 12
 PRINT_FREQUENCY = 5  # after how many apples should a log message be printed
 
 seed = random.randint(0, 2**32 - 1)
 random.seed(seed)
 
 game = Game(XCELLS, YCELLS)
-bot = Bot2(XCELLS, YCELLS)
+bot = bot2.Bot2(XCELLS, YCELLS)
 
 moves = []  # keep track of all the moves made
 

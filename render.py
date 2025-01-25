@@ -6,6 +6,7 @@ import numpy as np
 import cv2
 import random
 import math
+import os
 
 description = """
 This script is used to generate a video output file of a saved snake game
@@ -28,6 +29,9 @@ file = args.file
 quality = args.quality
 FPS = int(args.fps)
 border = not args.noborder
+
+if not os.path.exists("./saves"):
+    os.mkdir("./saves")
 if args.output:
     output_file = f"saves/{args.output}.mp4"
 else:
