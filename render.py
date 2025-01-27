@@ -32,10 +32,9 @@ border = not args.noborder
 
 if not os.path.exists("./saves"):
     os.mkdir("./saves")
-if args.output:
-    output_file = f"saves/{args.output}.mp4"
-else:
-    output_file = f"saves/{file}.mp4"
+
+output_file = args.output if args.output else file
+output_file = getNewFile(output_file, "mp4")
 
 # Process the data
 file = open(f"saves/{file}.snake")
