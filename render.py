@@ -159,7 +159,7 @@ def renderHD() -> None:
     cv2.circle(frame, get_center(apple), math.ceil(0.37 * CELL_SIZE), (0, 0, 255), -1)
 
     # display the score
-    cv2.putText(frame, f"score: {game.getScore()}", (20, 20), cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 1, cv2.LINE_AA)
+    cv2.putText(frame, f"score: {game.getScore()}", (20, 40), cv2.FONT_HERSHEY_PLAIN, 3, (255, 255, 255), 1, cv2.LINE_AA)
 
     # add a white border
     if border:

@@ -37,9 +37,9 @@ else:
     XCELLS, YCELLS = 64, 48  # default board dimensions
 
 if args.xcells:
-    XCELLS = args.xcells
+    XCELLS = int(args.xcells)
 if args.ycells:
-    YCELLS = args.ycells
+    YCELLS = int(args.ycells)
 
 PRINT_FREQUENCY = 5  # after how many apples should a log message be printed
 
