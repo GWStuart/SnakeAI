@@ -1,6 +1,7 @@
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from sys import argv
 from gameLogic import Game
+from fileUtils import getNewFile
 import time
 import numpy as np
 import cv2
@@ -40,17 +41,21 @@ output_file = getNewFile(output_file, "mp4")
 file = open(f"saves/{file}.snake")
 
 XCELLS, YCELLS, seed, num_moves = map(int, file.readline().split())
+last_move = None
 
 if args.scale: 
     CELL_SIZE = int(args.scale)
 else:
     match quality.lower():
-        case "low":
+        case "low" | "l":
             CELL_SIZE = round(360 / XCELLS)  # 260 x pixels
-        case "medium":
+        case "medium" | "m":
             CELL_SIZE = round(768 / XCELLS)  # 768 x pixels
-        case "high":
+        case "high" | "h":
             CELL_SIZE = round(1280 / XCELLS)  # 1280 x pixels
+        case _:
+            print("Unrecognised qulity")
+            quit()
 
 LENGTH, HEIGHT = XCELLS * CELL_SIZE + 2, YCELLS * CELL_SIZE + 2
 random.seed(seed)
@@ -61,11 +66,11 @@ spacing = round(num_moves / PRINT_FREQUENCY)
 fourcc = cv2.VideoWriter_fourcc(*"mp4v")
 
 match quality.lower():
-    case "low":
+    case "low" | "l":
         video = cv2.VideoWriter(f"./{output_file}", fourcc, float(FPS), (LENGTH, HEIGHT), 0)
-    case "medium":
+    case "medium" | "m":
         video = cv2.VideoWriter(f"./{output_file}", fourcc, float(FPS), (LENGTH, HEIGHT))
-    case "high":
+    case "high" | "h":
         video = cv2.VideoWriter(f"./{output_file}", fourcc, float(FPS), (LENGTH, HEIGHT))
 
 game = Game(XCELLS, YCELLS)
@@ -121,21 +126,39 @@ def renderMD() -> None:
 def renderHD() -> None:
     frame = np.zeros((HEIGHT, LENGTH, 3), dtype=np.uint8)
 
+    # draw the snake body
     body = game.getSnakeBody()
-    # for i in range(len(body) - 1):
-    #     renderTile(frame, *body[i], (0, 255, 0))
-
-    # head = body[-1]
-    # renderTile(frame, *head, (0, 200, 0))
-
     get_center = lambda part: (round((part[0] + 0.5) * CELL_SIZE), round((part[1] + 0.5) * CELL_SIZE))
     for i in range(len(body) - 1):
         cv2.line(frame, get_center(body[i]), get_center(body[i+1]), (0, 200, 0), math.ceil(0.75 * CELL_SIZE))
 
+    # add eyes to the snake
+    if len(body) > 1:
+        head = get_center(body[-1])
+        eye_distance = round(CELL_SIZE/6)
+        head_offset = round(CELL_SIZE/6)
+        if last_move == "l":
+            head = (head[0] - head_offset, head[1])
+            cv2.circle(frame, (head[0], head[1] + eye_distance), math.ceil(0.1 * CELL_SIZE), (0, 100, 0), -1)
+            cv2.circle(frame, (head[0], head[1] - eye_distance), math.ceil(0.1 * CELL_SIZE), (0, 100, 0), -1)
+        if last_move == "r":
+            head = (head[0] + head_offset, head[1])
+            cv2.circle(frame, (head[0], head[1] + eye_distance), math.ceil(0.1 * CELL_SIZE), (0, 100, 0), -1)
+            cv2.circle(frame, (head[0], head[1] - eye_distance), math.ceil(0.1 * CELL_SIZE), (0, 100, 0), -1)
+        if last_move == "u":
+            head = (head[0], head[1] - head_offset)
+            cv2.circle(frame, (head[0] + eye_distance, head[1]), math.ceil(0.1 * CELL_SIZE), (0, 100, 0), -1)
+            cv2.circle(frame, (head[0] - eye_distance, head[1]), math.ceil(0.1 * CELL_SIZE), (0, 100, 0), -1)
+        if last_move == "d":
+            head = (head[0], head[1] + head_offset)
+            cv2.circle(frame, (head[0] + eye_distance, head[1]), math.ceil(0.1 * CELL_SIZE), (0, 100, 0), -1)
+            cv2.circle(frame, (head[0] - eye_distance, head[1]), math.ceil(0.1 * CELL_SIZE), (0, 100, 0), -1)
+
+    # render the apple
     apple = game.getApplePosition()
-    # renderTile(frame, *apple, (0, 0, 255))
     cv2.circle(frame, get_center(apple), math.ceil(0.37 * CELL_SIZE), (0, 0, 255), -1)
 
+    # display the score
     cv2.putText(frame, f"score: {game.getScore()}", (20, 20), cv2.FONT_HERSHEY_PLAIN, 2, (255, 255, 255), 1, cv2.LINE_AA)
 
     # add a white border
@@ -145,15 +168,16 @@ def renderHD() -> None:
         frame[0, :] = np.array(255)
         frame[HEIGHT - 1, :] = np.array(255)
 
+    # write the frame to the video
     video.write(frame)
 
 
 match quality.lower():
-    case "low":
+    case "low" | "l":
         render_func = renderLD
-    case "medium":
+    case "medium" | "m":
         render_func = renderMD
-    case "high":
+    case "high" | "h":
         render_func = renderHD
 
 
@@ -167,6 +191,7 @@ while (move := file.read(1)):
         print(f"{percentage}% complete")
 
     game.moveSnake(move)
+    last_move = move
 
     if game.isGameOver():
         run = False
