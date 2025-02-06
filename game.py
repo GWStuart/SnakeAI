@@ -1,10 +1,17 @@
+'''
+Project demonstrating the functionality of the game as specified in the gameLogic file.
+Graphics implemented using pygame.
+
+Controls:
+    use WASD or arrow keys to control the snake
+'''
 from gameLogic import Game
 import pygame
 pygame.init()
 
 LENGTH, HEIGHT = 800, 600
 CELL_SIZE = 20
-XCELLS, YCELLS = LENGTH / CELL_SIZE, HEIGHT / CELL_SIZE
+XCELLS, YCELLS = LENGTH // CELL_SIZE, HEIGHT // CELL_SIZE
 
 win = pygame.display.set_mode((LENGTH, HEIGHT))
 pygame.display.set_caption("Snake Game")
