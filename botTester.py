@@ -1,7 +1,7 @@
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from gameLogic import Game
 import fileUtils
-import bot1, bot2
+import bot1.bot1, bot2.bot2
 import random
 import time
 import os
@@ -50,9 +50,12 @@ game = Game(XCELLS, YCELLS)
 
 match args.bot:
     case "bot1":
-        bot = bot1.Bot1(XCELLS, YCELLS)
+        bot = bot1.bot1.Bot1(XCELLS, YCELLS)
     case "bot2":
-        bot = bot2.Bot2(XCELLS, YCELLS)
+        bot = bot2.bot2.Bot2(XCELLS, YCELLS)
+    case _:
+        print("Unrecognised Bot")
+        quit()
 
 moves = []  # keep track of all the moves made
 

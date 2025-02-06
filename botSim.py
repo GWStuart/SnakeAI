@@ -1,8 +1,8 @@
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 import pygame
 import timeit
-from bot1 import Bot1
-from bot2 import Bot2
+from bot1.bot1 import Bot1
+from bot2.bot2 import Bot2
 import pickle
 pygame.init()
 
