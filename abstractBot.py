@@ -18,6 +18,7 @@ class Bot:
     @returns a string representing the move as a snake direction
     """
     def makeMove(self, snake: list[tuple[int, int]], apple: tuple[int, int]) -> str:
+        # this method is implemented by the subclasses
         pass
 
     """
