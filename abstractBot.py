@@ -1,18 +1,20 @@
-from gameLogic import Game
 import math
 
 class Bot:
-    directions = "lrud"  # left, right, up and down
-    direction_dict = {(1, 0): "r", (-1, 0): "l", (0, -1): "u", (0, 1): "d"}
+    DIRECTIONS = "lrud"  # left, right, up and down
+    DIRECTION_DICT = {(1, 0): "r", (-1, 0): "l", (0, -1): "u", (0, 1): "d"}
 
     def __init__(self, XCELLS: int, YCELLS: int):
         self.XCELLS = XCELLS
         self.YCELLS = YCELLS
 
+        # not sure if something like flood cells should be handled here
+        # I think the abstract bot should only have the absolute basics
         self.flood_cells = dict() # might be able to comment this line out later
 
     """
-    Make a snake move based on the provided information
+    Make a snake move based on the provided information.
+    This method holds the main decision making of the bot.
     @param snake the snake's body with the head as the last element
     @param apple the cell position of the apple
     @returns a string representing the move as a snake direction
@@ -23,12 +25,20 @@ class Bot:
 
     """
     Used to get the direction associated with a given direct move
-    @returns the direction string representing the given move
+    @returns the direction tuple representing the given move
     """
-    def getMoveDirection(self, snake: list[tuple[int, int]], newHead: tuple[int, int]):
+    def getMoveDirection(self, snake: list[tuple[int, int]], newHead: tuple[int, int]) -> tuple[int, int]:
         head = snake[-1]
         change = (newHead[0] - head[0], newHead[1] - head[1])
-        return Bot.direction_dict[change]
+        return change
+
+    def encodeDirection(self, direction):
+        return self.DIRECTION_DICT[direction]
+
+#    def getMoveDirection(self, snake: list[tuple[int, int]], newHead: tuple[int, int]) -> str:
+#        head = snake[-1]
+#        change = (newHead[0] - head[0], newHead[1] - head[1])
+#        return Bot.DIRECTION_DICT[change]
 
     """
     Returns all valid cells that the snake could get to
@@ -37,7 +47,7 @@ class Bot:
     """
     def getMoves(self, snake: list[tuple[int, int]]) -> list[tuple[int, int]]:
         result = []
-        for direction in Bot.directions:
+        for direction in Bot.DIRECTIONS:
             newHead = self.moveDirection(snake, direction)
             if self.isValidMove(snake, newHead):
                 result.append(newHead)
