@@ -1,9 +1,15 @@
+"""
+Used to render a snake game.
+Converts .snake --> .mp4
+
+Several command line options are available.
+See  summary with: render -h
+"""
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from sys import argv
-from gameLogic import Game
+from gameLogic.snake import Snake
 from fileUtils import getNewFile
 import time
-import numpy as np
 import cv2
 import random
 import math
