@@ -31,6 +31,7 @@ class Bot:
     """
     Returns a direction encoded as its string representation
     """
+    # THIS METHOD SHOULD NO LONGER BE NEEDED
     def encodeDirection(self, direction) -> str:
         return self.DIRECTION_DICT[direction]
 

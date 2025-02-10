@@ -39,15 +39,15 @@ def getNewFile(filename: str, extension: str) -> str:
     createSaveDirectory()
 
     # determine the file location
-    if extension == "snake":
-        location = GAME_SAVE_LOCATION
-    elif extension == "mp4":
-        location = RENDER_SAVE_LOCATION
-    else:
-        location = SAVES_LOCATION
+#    if extension == "snake":
+#        location = GAME_SAVE_LOCATION
+#    elif extension == "mp4":
+#        location = RENDER_SAVE_LOCATION
+#    else:
+#        location = SAVES_LOCATION
     
     # determine the full file path
-    path = f"{location}/{filename}.{extension}"
+    path = f"{filename}.{extension}"
 
     # check that the file path does not already exist
     if not os.path.exists(path):
@@ -55,10 +55,10 @@ def getNewFile(filename: str, extension: str) -> str:
 
     # increment file number if the given file already exists
     n = 2
-    path = f"saves/{filename}{n}.{extension}"
+    path = f"{filename}{n}.{extension}"
     while os.path.exists(path):
         n += 1
-        path = f"saves/{filename}{n}.{extension}"
+        path = f"{filename}{n}.{extension}"
 
     # return the final modified path
     return path

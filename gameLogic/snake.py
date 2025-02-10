@@ -99,6 +99,12 @@ class Snake:
     """
     def getHead(self) -> tuple[int, int]:
         return (self.headX, self.headY)
+
+    """
+    Get the dimensions of the board as a tuple of (XCElLS, YCELLS)
+    """
+    def getDimensions(self) -> tuple[int, int]:
+        return (self.XCELLS, self.YCELLS)
     
     """
     Returns the current direction of the snake.

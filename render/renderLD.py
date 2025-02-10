@@ -7,39 +7,26 @@ This is achieved with:
     - smaller output dimensions
     - black and white render
 """
+from render.util import AbstractRender
 import numpy as np
 import cv2
 
 
-class render_LD:
-    FOURCC = cv2.VideoWriter_fourcc(*"mp4v")
+class RenderLD(AbstractRender):
+    """
+    Use a custom video writer to generate low quality videos in black and white
+    """
+    def generateVideoWriter(self):
+        return cv2.VideoWriter(f"./{self.OUTPUT_FILE}", self.FOURCC, float(self.FPS), (self.LENGTH, self.HEIGHT), 0)
 
     """
-    Initialises the low quality render
-    @param output_file the file where the video should be saved
-    @param snake the snake object representing the game
-    @param CEll_SIZE the size in pixels of each cell in the grid
-    @param FPS the fps at which to render the game (affects playback speed)
+    Render a grid tile the given colour
+    @param frame the frame on which to render the tile
+    @param x the x position of the tile
+    @param y the y position of the tile
+    @param colour an rgb tuple representing the colour of the tile
     """
-    def __init__(self, output_file, snake, CELL_SIZE=None, FPS=30, BORDER=True):
-        self.snake = snake
-        self.FPS = FPS
-        self.BORDER = BORDER
-
-        # calculate the cell size for a low quality render
-        XCELLS, YCELLS = snake.getDimensions()
-        if CELL_SIZE:
-            self.CELL_SIZE = CELL_SIZE
-        else:
-            self.CELL_SIZE = round(360 / XCELLS)
-
-        # Determine the output dimensions
-        self.LENGTH = XCELLS * self.CELL_SIZE + 2
-        self.HEIGHT = YCELLS * self.CELL_SIZE + 2
-
-        # Generate the video writer
-        self.video = cv2.VideoWriter(f"./{output_file}", self.FOURCC, float(self.FPS), (self.LENGTH, self.HEIGHT), 0)
-
+    # note it is not actually RGB right now because I am working wtih gray scale
     def renderTile(self, frame, x: int, y: int, colour: tuple[int, int, int]) -> None:
         cv2.rectangle(frame, (1 + x*self.CELL_SIZE, 1 + y*self.CELL_SIZE), (1 + (x+1)*self.CELL_SIZE, 1 + (y+1)*self.CELL_SIZE), colour, -1)
 
@@ -65,9 +52,3 @@ class render_LD:
 
         self.video.write(frame)
 
-    """
-    Method that should be run when the rendering if finished.
-    Releases the video object
-    """
-    def finish(self) -> None:
-        self.video.release()
