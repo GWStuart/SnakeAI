@@ -1,4 +1,10 @@
+"""
+Utility file for rendering
+
+Defines the abstract render class that all other renderers inherit from
+"""
 import cv2
+import numpy as np
 
 
 """
@@ -29,6 +35,7 @@ class AbstractRender:
             self.CELL_SIZE = round(self.DESIRED_SCREEN_WIDTH / XCELLS)
 
         # Determine the output dimensions
+        # add 2 for the 1 pixel border
         self.LENGTH = XCELLS * self.CELL_SIZE + 2
         self.HEIGHT = YCELLS * self.CELL_SIZE + 2
 
@@ -54,4 +61,14 @@ class AbstractRender:
     """
     def finish(self) -> None:
         self.video.release()
+
+    """
+
+    """
+    def draw_border(self, frame) -> None:
+        if self.BORDER:
+            frame[:, 0] = np.array((255, 255, 255))
+            frame[:, self.LENGTH - 1] = np.array((255, 255, 255))
+            frame[0, :] = np.array((255, 255, 255))
+            frame[self.HEIGHT - 1, :] = np.array((255, 255, 255))
 

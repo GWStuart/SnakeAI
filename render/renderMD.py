@@ -25,25 +25,25 @@ class RenderMD(AbstractRender):
     def render(self) -> None:
         frame = np.zeros((self.HEIGHT, self.LENGTH, 3), dtype=np.uint8)
 
+        # render the snake body
         body = self.snake.getBody()
         for i in range(len(body) - 1):
             part = body[i]
             self.renderTile(frame, *part, (0, 255, 0))
 
+        # render the snake head
         head = body[-1]
         self.renderTile(frame, *head, (0, 200, 0))
 
+        # render the apple
         apple = self.snake.getApplePosition()
         self.renderTile(frame, *apple, (0, 0, 255))
 
+        # render the score
         score = self.snake.getScore()
         cv2.putText(frame, f"score: {score}", (20, 20), cv2.FONT_HERSHEY_PLAIN, 1, (255, 255, 255), 1, cv2.LINE_AA)
 
         # add a white border
-        if self.BORDER:
-            frame[:, 0] = np.array(255)
-            frame[:, self.LENGTH - 1] = np.array(255)
-            frame[0, :] = np.array(255)
-            frame[self.HEIGHT - 1, :] = np.array(255)
+        self.draw_border(frame)
 
         self.video.write(frame)

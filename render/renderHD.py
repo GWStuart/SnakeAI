@@ -57,11 +57,7 @@ class RenderHD(AbstractRender):
         cv2.putText(frame, f"score: {score}", (20, 40), cv2.FONT_HERSHEY_PLAIN, 3, (255, 255, 255), 1, cv2.LINE_AA)
 
         # add a white border
-        if self.BORDER:
-            frame[:, 0] = np.array(255)
-            frame[:, self.LENGTH - 1] = np.array(255)
-            frame[0, :] = np.array(255)
-            frame[self.HEIGHT - 1, :] = np.array(255)
+        self.draw_border(frame)
 
         # write the frame to the video
         self.video.write(frame)

@@ -30,13 +30,14 @@ parser.add_argument("-FPS", "--fps", default="30", help="The FPS at which to ren
 parser.add_argument("-s", "--scale", help="The scale of the video. Lower scale renders faster but is lower quality")
 parser.add_argument("-nb", "--noborder", action="store_true", help="Whether to render the border or not")
 parser.add_argument("-o", "--output", help="The output file without extension. Defaults to same name as the file to render")
+parser.add_argument("-l", "--log", default="5", help="After what percent completion should a message be logged (default is every 5%)")
 
 # parse the command line arguments
 args = parser.parse_args()
 
 # Define some constants
 SNAKE_SPAWN = (2, 2)
-PRINT_FREQUENCY = 10  # percent inverval when an update should be printed
+PRINT_FREQUENCY = int(args.log)  # percent inverval when an update should be printed
 QUALITY = args.quality.lower() if args.quality else "medium"  # default to medium
 FPS = int(args.fps)
 BORDER = not args.noborder
@@ -59,7 +60,7 @@ output_file = getNewFile(output_file, "mp4")
 # Load init data from the data file
 XCELLS, YCELLS, SEED, NUM_MOVES = map(int, data_file.readline().split())
 random.seed(SEED)
-PRINT_INTERVAL = round(NUM_MOVES / PRINT_FREQUENCY)
+PRINT_INTERVAL = round(NUM_MOVES * PRINT_FREQUENCY / 100)
 snake = Snake((XCELLS, YCELLS), SNAKE_SPAWN)
 
 # select the relevant render engine
