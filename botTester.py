@@ -4,9 +4,9 @@ Specify the bot to be tested as a command line argument
 """
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from gameLogic.snake import Snake
+from timeUtil import Timer
 import fileUtils
 import random
-import time
 import os
 
 # Import the bots to be tested
@@ -69,10 +69,13 @@ match args.bot:
         quit()
 
 
+# start the bot simultion
 print("\nStarting Simulation")
 
+timer = Timer()
+timer.start()
+
 moves = []  # keep track of all the moves made
-start_time = time.time()
 while not snake.isGameOver():
     # invoke the makeMove() method to find the best move for the bot
     move = bot.makeMove(snake.getBody(), snake.getApplePosition())
@@ -91,9 +94,10 @@ while not snake.isGameOver():
             print(f"Score: {snake.getScore()}")
 
 print("Simulation Finished\n")
+timer.stop()
+
 print(f"Final score was: {snake.getScore()}")
-run_time = time.time() - start_time
-print(f"Time to execute was {run_time} seconds")
+print(f"Time to execute was {timer.get_elapsed_time()}")
 
 # Save the data to a file
 print("\nWriting results to save file")

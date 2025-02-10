@@ -7,17 +7,15 @@ See  summary with: render -h
 """
 from argparse import ArgumentParser, RawDescriptionHelpFormatter
 from sys import argv
+from timeUtil import Timer
 from gameLogic.snake import Snake
 from gameLogic.util import decodeDirection
 from render.renderLD import RenderLD
 from render.renderMD import RenderMD
 from render.renderHD import RenderHD
-from fileUtils import getNewFile
-import time
+from fileUtils import getDefaultOutputFileName, getNewFile
 import cv2
 import random
-import math
-import os
 
 description = """
 This script is used to generate a video output file of a saved snake game
@@ -55,7 +53,7 @@ except FileNotFoundError:
     quit()
 
 # Generate the ouput file name
-output_file = args.output if args.output else FILE.partition(".")[0]
+output_file = args.output if args.output else getDefaultOutputFileName(FILE)
 output_file = getNewFile(output_file, "mp4")
 
 # Load init data from the data file
@@ -78,7 +76,8 @@ match QUALITY:
 
 # begin the rendering process
 print("\nRendering in Progress")
-start_time = time.time()
+timer = Timer()
+timer.start()
 
 i = 0
 while (move := data_file.read(1)):
@@ -100,12 +99,13 @@ while (move := data_file.read(1)):
 # finish the render and close the data file
 render_engine.finish()
 data_file.close()
+timer.stop()
 
 # Output results
 print(f"\nRendering finished successfully")
-print("Time to render: " + time.strftime("%H:%M:%S", time.gmtime(time.time() - start_time)) + "\n")
+print("Time to render: " + timer.get_elapsed_time() + "\n")
 
 print(f"Saved video as {output_file}")
 seconds = 1 / FPS * NUM_MOVES
-print("Video duration: " + time.strftime("%H:%M:%S", time.gmtime(seconds)) + "\n")
+print("Video duration: " + Timer.convert_time(seconds) + "\n")
 

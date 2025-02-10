@@ -11,7 +11,6 @@ SAVES_LOCATION = "saves"
 GAME_SAVE_LOCATION = f"{SAVES_LOCATION}/games"
 RENDER_SAVE_LOCATION = f"{SAVES_LOCATION}/renders"
 
-
 """
 Ensures that the relevant save directories exist
 """
@@ -25,6 +24,19 @@ def createSaveDirectory():
     if not os.path.exists("./saves/renders"):
         os.mkdir("./saves/renders")
 
+"""
+Returns the default output file name for a given input file name
+"""
+def getDefaultOutputFileName(input_file_name: str) -> str:
+    # replace the file extension
+    file = input_file_name.partition(".")[0]
+
+    # remove file location
+    file = file[-file[::-1].index("/"):]
+
+    # return the default output location
+    return f"{RENDER_SAVE_LOCATION}/{file}"
+
 
 """
 Finds a valid filename that does not exist in the /saves directory
@@ -33,18 +45,15 @@ Will start with the specified file name and append duplicate counts if the file 
 def getNewFile(filename: str, extension: str) -> str:
     # check that a filename was specified
     if not filename:
-        filename = DEFAULT_FILE_NAME
+        if extension == "snake":
+            filename = f"{GAME_SAVE_LOCATION}/{DEFAULT_FILE_NAME}"
+        elif extension == "mp4":
+            filename = f"{RENDER_SAVE_LOCATION}/{DEFAULT_FILE_NAME}"
+        else:
+            filename = f"{SAVES_LOCATION}/{DEFAULT_FILE_NAME}"
 
     # Ensure that the saves directory exists
     createSaveDirectory()
-
-    # determine the file location
-#    if extension == "snake":
-#        location = GAME_SAVE_LOCATION
-#    elif extension == "mp4":
-#        location = RENDER_SAVE_LOCATION
-#    else:
-#        location = SAVES_LOCATION
     
     # determine the full file path
     path = f"{filename}.{extension}"
