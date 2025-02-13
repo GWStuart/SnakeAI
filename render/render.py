@@ -26,14 +26,15 @@ parser = ArgumentParser(prog="render", description=description, formatter_class=
 # Get command line arguments
 parser.add_argument("file", help="File path to the file to render")
 parser.add_argument("-q", "--quality", default="medium", help="The quality to render output. Can be high, medium or low")
-parser.add_argument("-FPS", "--fps", default="30", help="The FPS at which to render the video. Overwrites that set by the quality")
+parser.add_argument("-f", "--fps", default="30", help="The FPS at which to render the video. Overwrites that set by the quality")
 parser.add_argument("-s", "--scale", help="The scale of the video. Lower scale renders faster but is lower quality")
 parser.add_argument("-nb", "--noborder", action="store_true", help="Whether to render the border or not")
 parser.add_argument("-o", "--output", help="The output file without extension. Defaults to same name as the file to render")
-parser.add_argument("-l", "--log", default="5", help="After what percent completion should a message be logged (default is every 5%)")
+parser.add_argument("-l", "--log", default="5", help="After what percent completion should a message be logged (default is every 5 percent)")
 
 # parse the command line arguments
 args = parser.parse_args()
+quit()
 
 # Define some constants
 SNAKE_SPAWN = (2, 2)
