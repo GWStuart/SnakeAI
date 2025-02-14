@@ -31,6 +31,7 @@ If you are looking to test `bot1` then this is simply achieved with the command,
 As described above, this will show you the bots final socre and will generate a save file than can be optionally rendered in future.
 
 Several command line options are available and I'll share the output of `test --help` below,
+![image](https://github.com/user-attachments/assets/1235165c-7e6d-4e56-a676-9a0dde83cdce)
 
 ## Rendering a Saved Game
 To render a game saved at the location `saves/games/output.snake` then use the following command,
@@ -39,7 +40,8 @@ To render a game saved at the location `saves/games/output.snake` then use the f
 The output of the script will be an mp4 file which is by default located at `saves/renders/output.mp4`.
 
 Like with the bot testing command, several command line options are available. I will again show the output of `render --help` below,
+![image](https://github.com/user-attachments/assets/6b1857f8-a43a-43df-be91-0f93971c99f6)
 
-# Things to still add
+# Things to still include in the README
 - How to use the botSim
 - Process of creating your own bot
