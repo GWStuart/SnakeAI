@@ -1,5 +1,9 @@
 # SnakeAI
-Simple Snake Game AI
+Project to help create, test and render AI bot's playing the classic snake game.
+
+<div align=center>
+<img width="416" alt="AIsnake" src="https://github.com/user-attachments/assets/68da5f01-eb25-4132-9f3f-246da53f4d4f" />
+</div>
 
 # Setup / Installation
 Not much do it but make sure to install the `pip` dependencies.
@@ -24,7 +28,7 @@ Some useful bash aliases can be enbled using:
 (note this guide will act as if these aliases are being used. If that is not the case then just type out the whole command)
 
 
-## Testng a Bot
+## Testing a Bot
 If you are looking to test `bot1` then this is simply achieved with the command,
 - `test bot1`
 
@@ -44,6 +48,42 @@ Like with the bot testing command, several command line options are available. I
 
 ![image](https://github.com/user-attachments/assets/6b1857f8-a43a-43df-be91-0f93971c99f6)
 
-# Things to still include in the README
-- How to use the botSim
-- Process of creating your own bot
+## Using the Bot Simulator
+The bot simulator is a useful program to help better understand the decisions made by the bot. This program allows the user to interactively step through the bot's decisions.
+
+For a basic usage:
+- click to add "obstacles" (these are treated in the same way as the snake body)
+- "b" to spawn the head of the snake bot
+- "a" to spawn the apple
+- "SPACE" to step through a move
+- "s" to save the current state to a file
+- "o" to open a save file
+- "t" to record the amount of time it takes for the bot to reach the apple
+
+See within the file for more customisation options.
+
+# Creating a Custom Bot
+The project is designed in such a way that it is very easy to create your own bots.
+
+The process is as follows:
+- Create a new python package for the bot
+- Within the package create a class that should inherit from the abstract bot.
+```python
+from abstractBot import Bot
+
+class MyBot(Bot):
+  pass
+```
+- You should then overwrite the `makeMove` method which is the method called by the bot tester
+```python
+"""
+Make a snake move based on the provided information
+@param snake the snake's body with the head as the last element
+@param apple the cell position of the apple
+@returns the move direction as a tuple of the x, y direction
+"""
+def makeMove(self, snake: list[tuple[int, int[[, apple: tuple[int, int]) -> tuple[int, int]:
+  return (1, 0)  # this bot only moves right
+```
+
+The [abstractBot](abstractBot.py) contains several useful functions that you may want to use in your own custom bot. 
